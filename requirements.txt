@@ -1,0 +1,9 @@
+# tensorflow==2.2.0 with CUDA 10.1 #### 1. install vs 2. install cuda 10.1 3. install cdnn?? 4. install just tensorflow
+tensorflow
+opencv-python
+moviepy
+librosa
+matplotlib
+pandas
+keras
+scikit-image
