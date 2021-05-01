@@ -1,3 +1,5 @@
-audio/
-data/
-files/
+audio/*
+data/*
+files/*
+models/*
+test/*

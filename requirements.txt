@@ -7,3 +7,6 @@ matplotlib
 pandas
 keras
 scikit-image
+cmake
+dlib
+keras

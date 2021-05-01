@@ -27,6 +27,7 @@ def getBorderValue(nparray):
 
 def processAudio(filename, rate):
     path = FILE_PATH + filename
+    
     audioclip = AudioFileClip(path)
     audioclip.write_audiofile(AUDIO_FOLDER + AUDIO_NAME)
 
@@ -99,10 +100,19 @@ def processVideofile(filename, rate, normal_level, border, length, time_frame_le
         video_capture.set(cv2.CAP_PROP_POS_FRAMES, timestamp * frames_per_sec)
         success, frame = video_capture.read()   
 
-normal_level_, border_, length_, time_frame_length_ = processAudio("obema2.mp4", 2)
 
-print("AUDIO DONE")
+import sys
 
-processVideofile("obema2.mp4",2,normal_level_, border_, length_, time_frame_length_)
+if __name__ == "__main__":
+    print(f"Arguments count: {len(sys.argv)}")
+    
+    video__ = sys.argv[1]
+    rate__ = int(sys.argv[2])
 
-print("VIDEO DONE")
+    normal_level_, border_, length_, time_frame_length_ = processAudio(video__, rate__)
+
+    print("AUDIO DONE")
+
+    processVideofile(video__, rate__,normal_level_, border_, length_, time_frame_length_)
+
+    print("VIDEO DONE")
