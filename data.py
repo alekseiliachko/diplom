@@ -6,8 +6,8 @@ from PIL import Image
 
 FILE_PATH = 'files/'
 AUDIO_FOLDER = 'audio/'
-A_DIR = "data/a/"
-B_DIR = "data/b/"
+A_DIR = "structured_data/a/"
+B_DIR = "structured_data/b/"
 
 AUDIO_NAME = 'audio.wav'
 

@@ -10,7 +10,7 @@ from scipy.signal import butter,filtfilt
 FILE_FOLDER = 'files/'
 
 AUDIO_PATH = 'audio/audio.wav'
-DATA_PATH = 'data/peeks.npy'
+NPY_PATH = 'npy/peeks.npy'
 
 def butter_highpass(data,cutoff, fs, order=5):
    """
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     onset_frames = librosa.util.peak_pick(o_env, 2, 3, 3, 5, 0.3, 4)
 
     peeks = np.array(librosa.frames_to_time(onset_frames, sr=sr))
-
+    
     if (do_print):
         print(peeks)
 
@@ -62,3 +62,6 @@ if __name__ == "__main__":
         linestyle='--', label='Onsets')
 
         plt.show()
+    
+    print(peeks.shape)
+    np.save(NPY_PATH, peeks)

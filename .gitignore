@@ -3,3 +3,7 @@ data/*
 files/*
 models/*
 test/*
+structured_data/*
+debug/*
+npy/*
+structured_data/*
