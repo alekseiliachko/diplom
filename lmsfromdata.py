@@ -34,8 +34,8 @@ def landmark(img, face):
     landmarks = predictor(image=img, box=face)
     return face_utils.shape_to_np(landmarks).tolist()
 
-def lms_for_peeks(path, lmpath):
-    save_path_lm = lmpath + "landmarks"
+def lms_for_peeks(path, lmpath, prefix):
+    save_path_lm = lmpath + "landmarks"+ "_" + prefix
     images = loadImages(path)
     lms = []
 
@@ -49,8 +49,8 @@ def lms_for_peeks(path, lmpath):
 
     np.save(save_path_lm, np.array(lms))
 
-def lms_for_peeks_debug(path, lmpath):
-    save_path_lm = lmpath + "landmarks"
+def lms_for_peeks_debug(path, lmpath, prefix):
+    save_path_lm = lmpath + "landmarks" + "_" + prefix
     images = loadImages(path)
     lms = []
 
@@ -68,11 +68,13 @@ def lms_for_peeks_debug(path, lmpath):
 
 if __name__ == "__main__":
     debug = sys.argv[1]
-    image_path = 'data/'
+    prefix = sys.argv[2]
+
+    image_path = 'data/' + prefix + '/'
     npy_path = 'npy/'
     
     if (debug == 'true'):
-        lms_for_peeks_debug(image_path, npy_path)
+        lms_for_peeks_debug(image_path, npy_path, prefix)
     else:
-        lms_for_peeks(image_path, npy_path)
+        lms_for_peeks(image_path, npy_path, prefix)
         
