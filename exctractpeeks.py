@@ -46,7 +46,7 @@ if __name__ == "__main__":
     audio, sr = librosa.load(AUDIO_PATH)
 
 #   FILTER
-    x_f=butter_highpass(audio,1000, sr, order=5)
+    x_f=butter_highpass(audio,30000, sr, order=5)
 
     o_env = librosa.onset.onset_strength(x_f, sr=sr)
     times = librosa.frames_to_time(np.arange(len(o_env)), sr=sr)

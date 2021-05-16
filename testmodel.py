@@ -19,11 +19,9 @@ Y1 = np.ones(X1.shape[0])
 Y2 = np.zeros(X2.shape[0])
 
 X = np.concatenate((X1, X2), axis=0)
-# X = tf.expand_dims(X1, axis=-1)
+# np.random.shuffle(X)   
 
 Y = np.concatenate((Y1, Y2), axis=0)
-
-# XY = ?
 
 print(X.shape)
 print(Y.shape)
@@ -49,4 +47,4 @@ model.compile(loss=keras.losses.categorical_crossentropy,
 
 model.summary()
 
-history = model.fit(X, Y, steps_per_epoch=10, epochs=10, validation_split=0.2, shuffle=True, batch_size=20)
+# history = model.fit(X, Y, steps_per_epoch=10, epochs=10, validation_split=0.2, shuffle=True, batch_size=20)
