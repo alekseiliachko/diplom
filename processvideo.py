@@ -5,9 +5,12 @@ from PIL import Image
 import os
 import sys
 import random
+import pickle
+from utils import predict_frame
 
-# Load model
-# model = smth()
+clf = None
+with open('models/trained', 'rb') as f:
+    clf = pickle.load(f)
 
 FILE_PATH = 'files/'
 WIDTH = 150;
@@ -22,8 +25,7 @@ def process_stat(array, rate):
     
     return s_time;
 
-def process_video(filename, rate):
-    faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
+def process_video(filename, rate, clf):
 
     path = FILE_PATH + filename
     path = os.path.abspath(path)
@@ -47,25 +49,8 @@ def process_video(filename, rate):
 
         if (success == False):
             continue;
-
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        faces = faceCascade.detectMultiScale(
-            gray,
-            scaleFactor=1.3,
-            minNeighbors=3,
-            minSize=(30, 30))
         
-        if (len(faces) != 0):
-            x, y, w, h = faces[0]
-            faceImage = frame[y:y+h, x:x+w]
-            final = Image.fromarray(faceImage)
-            final = final.resize((WIDTH, HEIGHT), Image.ANTIALIAS)
-
-            # do work
-            # bln = model.process(final)
-            bln = bool(random.getrandbits(1));
-        else:
-            bln = False
+        bln = predict_frame(frame, clf=clf);
         
         res.append(bln)
 
@@ -80,11 +65,11 @@ def process_video(filename, rate):
     return time_speaking, prc
 
 if __name__ == "__main__":
-    
+
     filename = sys.argv[1]
     rate = int(sys.argv[2])
 
-    time_, proc_ = process_video(filename, rate)
+    time_, proc_ = process_video(filename, rate, clf)
     print("processed video: " + filename)
     print("length of speech in the video: " + str(time_))
     print("part of the video: " + str(proc_))

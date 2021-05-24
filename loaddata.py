@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
+import pickle
+from utils import prepareLm
+
 X1 = np.load('npy/talking_dataset.npy')
 X2 = np.load('npy/silent_dataset.npy')
 Y1 = np.ones(X1.shape[0])
@@ -17,10 +19,24 @@ Y = np.concatenate((Y1, Y2), axis=0).reshape(-1,1)
 print(X.shape)
 print(Y.shape)
 
-n = 100
+n = 1
 
-for i in range(0,n):
-    x = X[i][:,0]
-    y = X[i][:,1]
-    plt.scatter(x, y, s = 5)
-plt.show()
+# for i in range(0,n):
+#     x = X[i][:,0]
+#     y = X[i][:,1]
+#     plt.scatter(x, y, s = 5)
+# plt.show()
+
+with open('models/trained', 'rb') as f:
+    clf = pickle.load(f)
+
+X1 = prepareLm(X[0])
+
+X2 = prepareLm(X[5555])
+
+# print(X[0])
+# print(X_r)
+
+print(clf.predict(X1))
+print(clf.predict(X2))
+

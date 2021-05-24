@@ -3,9 +3,11 @@ import dlib
 from PIL import Image
 import cv2
 import uuid
+from imutils import face_utils
 
 face_detector = dlib.get_frontal_face_detector()
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
+predictor = dlib.shape_predictor("models/shape_predictor_68_face_landmarks.dat")
 
 WIDTH = 150
 IMAGE_DEBUG_PATH = 'debug/image/'
@@ -42,3 +44,36 @@ def extract_face_cv2(image, debug):
     if (debug):
         cv2.imwrite(IMAGE_DEBUG_PATH + str(uuid.uuid4()) + ".jpg", final)
     return True, final
+
+def landmark(img, face):
+    landmarks = predictor(image=img, box=face)
+    return face_utils.shape_to_np(landmarks).tolist()
+
+def detect(image, debug):
+    res, cut_face = extract_face_cv2(image, debug)
+    if (not res):
+        return False, None
+    faces = face_detector(cut_face, 1)
+    if (len(faces) > 0):
+        lm = landmark(cut_face, faces[0])
+        return True, lm
+    else:
+        return False, None
+
+def predict_frame(frame, clf):
+    success, lm = detect(frame, True)
+        
+    if (not success):
+        return False
+
+    processed = prepareLm(lm)
+
+    prediction = clf.predict(processed)
+
+    if (prediction[0] == 1):
+        return True
+    else:
+        return False
+        
+def prepareLm(lm):
+    return np.expand_dims(np.array(lm).flatten(), axis=0) / 150
