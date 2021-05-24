@@ -1,25 +1,19 @@
-import numpy as np
 from moviepy.editor import *
 import cv2
-import librosa.display
 from PIL import Image
-import dlib 
 import os
-import sys
-from imutils import face_utils
-import uuid
+import time
 
-FILE_PATH = 'files/'
+from numpy.lib import utils
+from utils import extract_face_cv2, extract_face_dlib
 DATA_DIR = 'data/silent/'
 
 WIDTH = 150;
 HEIGHT = 150;
 
-def data_for_rate(filename, rate):
-    faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
+def data_for_rate(filepath, rate, debug):
 
-    path = FILE_PATH + filename
-    path = os.path.abspath(path)
+    path = os.path.abspath(filepath)
     video_capture = cv2.VideoCapture(path)
 
     frame_count = video_capture.get(cv2.CAP_PROP_FRAME_COUNT ) 
@@ -36,42 +30,48 @@ def data_for_rate(filename, rate):
     video_capture.set(cv2.CAP_PROP_POS_FRAMES, timestamp * frames_per_sec) # optional
     success, frame = video_capture.read()
 
+    images = []
+    # c = 0
     cnt = 0
+    # start_time = time.time()
+
     while success and timestamp < length:
 
         if (success == False):
             continue;
 
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        faces = faceCascade.detectMultiScale(
-            gray,
-            scaleFactor=1.3,
-            minNeighbors=3,
-            minSize=(30, 30))
-        
-        for i in range(0, len(faces)):
-            x, y, w, h = faces[i]
-            faceImage = frame[y:y+h, x:x+w]
-            final = Image.fromarray(faceImage)
-            final = final.resize((WIDTH, HEIGHT), Image.ANTIALIAS)
-            image_path = DATA_DIR + str(uuid.uuid4()) + ".jpg"
-            final.save(image_path)
+        res, face = extract_face_cv2(frame, debug)
 
+        if (res):
+            images.append(face)
+            # c += 1
             cnt += 1
+
+        # if (c == 100):
+        #     print("--- 100 taken: %s ---" % (time.time() - start_time))
+        #     start_time = time.time()
+        #     c = 0
 
         # next frame
         timestamp = timestamp + d_time;
         video_capture.set(cv2.CAP_PROP_POS_FRAMES, timestamp * frames_per_sec)
-        success, frame = video_capture.read()   
+        success, frame = video_capture.read()
 
     print("total: " + str(cnt) + " images generated.")
 
-if __name__ == "__main__":
-    
-    filename = sys.argv[1]
+    return images   
 
-    rate = None
-    if (len(sys.argv) > 2):
-        rate = int(sys.argv[2])
+def path_leaf(path):
+    head, tail = os.path.split(path)
+    return tail
 
-    data_for_rate(filename, rate)
+def process_video_extract_data_using_rate(filepath, rate, debug):
+    filename = path_leaf(filepath)
+
+    print('generating data from ' + filename + '...')
+
+    data = data_for_rate(filepath, rate, debug)
+    print('done.')
+    print('----------------------')
+
+    return data

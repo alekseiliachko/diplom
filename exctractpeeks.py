@@ -1,7 +1,7 @@
 import librosa
 import librosa.display
 import numpy as np
-import datetime
+import os
 import sys
 from moviepy.editor import AudioFileClip
 import matplotlib.pyplot as plt
@@ -32,20 +32,18 @@ def butter_highpass(data,cutoff, fs, order=5):
    y = filtfilt(b, a, data)
    return y
 
-if __name__ == "__main__":    
+def path_leaf(path):
+    head, tail = os.path.split(path)
+    return tail
 
-    do_print = False
+def process_video_exctract_peeks(filepath, do_print):
+    filename = path_leaf(filepath)
+    print('extracting peeks from ' + filename + '...')
 
-    if (len(sys.argv) > 2):
-        do_print = bool(sys.argv[2])
-
-    filename = sys.argv[1]
-
-    file_path = FILE_FOLDER + filename
     npy_path = NPY_PATH + filename + NPY_POSTF
     audio_path = AUDIO_FOLDER + filename + AUDIO_POSTF
     
-    audioclip = AudioFileClip(file_path)
+    audioclip = AudioFileClip(filepath)
     audioclip.write_audiofile(audio_path)
 
     audio, sr = librosa.load(audio_path)
@@ -69,4 +67,8 @@ if __name__ == "__main__":
         plt.show()
     
     print("total: " + str(peeks.shape[0]) + " peeks found.")
-    np.save(npy_path, peeks)
+
+    print('done.')
+    print('----------------------')
+
+    return peeks

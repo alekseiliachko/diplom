@@ -10,7 +10,7 @@ from imutils import face_utils
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor("models/shape_predictor_68_face_landmarks.dat")
 
-DEBUG_PATH = 'debug/'
+DEBUG_PATH = 'debug/marked/'
 
 def loadImages(folder):
     images = []
@@ -34,9 +34,9 @@ def landmark(img, face):
     landmarks = predictor(image=img, box=face)
     return face_utils.shape_to_np(landmarks).tolist()
 
-def lms_for_peeks(path, lmpath, prefix):
+def lms_for_peeks(images, lmpath, prefix):
     save_path_lm = lmpath + "landmarks"+ "_" + prefix
-    images = loadImages(path)
+
     print("loaded: " + str(len(images)) + " faces.")
     lms = []
 
@@ -51,9 +51,9 @@ def lms_for_peeks(path, lmpath, prefix):
     print("total: " + str(len(lms)) + " landmarks.")
     np.save(save_path_lm, np.array(lms))
 
-def lms_for_peeks_debug(path, lmpath, prefix):
+def lms_for_peeks_debug(images, lmpath, prefix):
     save_path_lm = lmpath + "landmarks" + "_" + prefix
-    images = loadImages(path)
+
     print("loaded: " + str(len(images)) + " faces.")
     lms = []
 
@@ -70,15 +70,17 @@ def lms_for_peeks_debug(path, lmpath, prefix):
     print("total: " + str(len(lms)) + " landmarks.")
     np.save(save_path_lm, np.array(lms))
 
-if __name__ == "__main__":
-    debug = sys.argv[1]
-    prefix = sys.argv[2]
+def process_data_extract_lms(images, prefix, debug):
 
-    image_path = 'data/' + prefix + '/'
     npy_path = 'npy/'
+
+    print('generating lamdmarks for ' + prefix + '...')
     
-    if (debug == 'true'):
-        lms_for_peeks_debug(image_path, npy_path, prefix)
+    if (debug):
+        lms_for_peeks_debug(images, npy_path, prefix)
     else:
-        lms_for_peeks(image_path, npy_path, prefix)
+        lms_for_peeks(images, npy_path, prefix)
+    
+    print('done.')
+    print('----------------------')
         

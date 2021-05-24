@@ -1,15 +1,12 @@
 import numpy as np
 from moviepy.editor import *
 import cv2
-import librosa.display
 from PIL import Image
-import sys
 import shutil
-import pathlib
 import os
-import uuid
+from utils import extract_face_cv2
+from utils import extract_face_dlib
 
-FILE_FOLDER = 'files/'
 AUDIO_FOLDER = 'audio/'
 DATA_DIR = 'data/talking/'
 
@@ -17,11 +14,6 @@ NPY_PATH = 'npy/'
 NPY_POSTF = '_peeks.npy'
 
 AUDIO_NAME = 'audio.wav'
-
-WIDTH = 150;
-HEIGHT = 150;
-
-faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
 def clear(path):
     path_ = os.path.abspath(path)
@@ -32,48 +24,46 @@ def int_r(num):
     num = int(num + (0.5 if num > 0 else -0.5))
     return num
 
-def images_for_peeks(filename, timespamps):
-    path = FILE_FOLDER + filename
-    path = os.path.abspath(path)
+def images_for_peeks(filepath, timespamps, debug):
+    
+    path = os.path.abspath(filepath)
     video_capture = cv2.VideoCapture(path)
     frames_per_sec = video_capture.get(cv2.CAP_PROP_FPS)
 
     cnt = 0
+    images = []
 
     for timestamp in timespamps:
         frame_number = int_r(frames_per_sec * timestamp)
         video_capture.set(cv2.CAP_PROP_POS_FRAMES, frame_number-1)
         res, frame = video_capture.read()
 
-        if (res == False):
+        if (not res):
             continue;
 
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        faces = faceCascade.detectMultiScale(
-            gray,
-            scaleFactor=1.3,
-            minNeighbors=3,
-            minSize=(30, 30))
-        
-        for i in range(0, len(faces)):
-            x, y, w, h = faces[i]
-            faceImage = frame[y:y+h, x:x+w]
-            final = Image.fromarray(faceImage)
-            final = final.resize((WIDTH, HEIGHT), Image.ANTIALIAS)
-            image_path = DATA_DIR + str(uuid.uuid4()) + ".jpg"
-            final.save(image_path)
+        res, face = extract_face_dlib(frame, debug)
 
+        if (res):
+            images.append(face)
             cnt += 1
 
     print("total: " + str(cnt) + " faces.")
 
-if __name__ == "__main__":
-    filename = sys.argv[1]
+    return images
 
-    peek_path = NPY_PATH + filename + NPY_POSTF
-    peeks = np.load(peek_path)
+def path_leaf(path):
+    head, tail = os.path.split(path)
+    return tail
+
+def process_video_extract_data_using_peeks(peeks, filepath, debug):
+    filename = path_leaf(filepath)
+    print('generating data from peeks for ' + filename + '...')
+
     print('loaded: ' + str(peeks.shape[0]) + ' peeks.')
 
-    clear(DATA_DIR)
+    data = images_for_peeks(filepath, peeks, debug)
 
-    images_for_peeks(filename, peeks)
+    print('done.')
+    print('----------------------')
+
+    return data
