@@ -4,6 +4,7 @@ from exctractpeeks import process_video_exctract_peeks
 from lmsfromdata import process_data_extract_lms
 import glob
 import time
+import numpy as np
 
 TALKING_FOLDER = 'files/talking/*'
 SILENT_FOLDER = 'files/silent/*'
@@ -22,18 +23,51 @@ def load_silent_dataset():
     print("--- %s seconds ---" % (time.time() - start_time))
 
 def process_talking_videos():
+    print('/////// PROCESSING TALKING VIDEOS... ///////')
+    talking_dataset = []
+    talking_total_time = 0
     start_time = time.time()
     for file in TALKING_FILES:
         __peeks = process_video_exctract_peeks(file, False)
         __data = process_video_extract_data_using_peeks(__peeks, file, False)
-        process_data_extract_lms(__data, 'talking', False)
-    print("--- %s seconds ---" % (time.time() - start_time))
+        __lms = process_data_extract_lms(__data, 'talking', False)
+        
+        dtime = time.time() - start_time
+        print("--- %s seconds ---" % (dtime))
+        talking_dataset += __lms
+        talking_total_time += dtime
+
+    talking_dataset = np.array(talking_dataset)
+    np.save('npy/talking_dataset', talking_dataset)
+
+    print('/////// TOTAL: ' + str(talking_dataset.shape[0]))
+    print('/////// DONE.                        ///////')
+
+    return talking_total_time
 
 def process_silent_videos():
+    print('/////// PROCESSING SILENT  VIDEOS... ///////')
+    silent_dataset = []
+    silent_total_time = 0
     start_time = time.time()
     for file in SILENT_FILES:
         __data = process_video_extract_data_using_rate(file, None, False)
-        process_data_extract_lms(__data, 'silent', True)
-    print("--- %s seconds ---" % (time.time() - start_time))
+        __lms = process_data_extract_lms(__data, 'silent', True)
+        
+        dtime = time.time() - start_time
+        print("--- %s seconds ---" % (dtime))
+        silent_dataset += __lms
+        silent_total_time += dtime
 
-process_silent_videos()
+    silent_dataset = np.array(silent_dataset)
+    np.save('npy/silent_dataset', silent_dataset)
+    
+    print('/////// TOTAL: ' + str(silent_dataset.shape[0]))
+    print('/////// DONE.                        ///////')
+
+    return silent_total_time
+
+t1 = process_silent_videos()
+t2 = process_talking_videos()
+
+print(' total time: ' + str(t1) + str(t2))

@@ -41,7 +41,7 @@ def images_for_peeks(filepath, timespamps, debug):
         if (not res):
             continue;
 
-        res, face = extract_face_dlib(frame, debug)
+        res, face = extract_face_cv2(frame, debug)
 
         if (res):
             images.append(face)

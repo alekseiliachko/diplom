@@ -49,8 +49,8 @@ def lms_for_peeks(images, lmpath, prefix):
             i += 1
 
     print("total: " + str(len(lms)) + " landmarks.")
-    np.save(save_path_lm, np.array(lms))
-
+    return lms
+    
 def lms_for_peeks_debug(images, lmpath, prefix):
     save_path_lm = lmpath + "landmarks" + "_" + prefix
 
@@ -68,7 +68,7 @@ def lms_for_peeks_debug(images, lmpath, prefix):
             i += 1
 
     print("total: " + str(len(lms)) + " landmarks.")
-    np.save(save_path_lm, np.array(lms))
+    return lms
 
 def process_data_extract_lms(images, prefix, debug):
 
@@ -77,10 +77,15 @@ def process_data_extract_lms(images, prefix, debug):
     print('generating lamdmarks for ' + prefix + '...')
     
     if (debug):
-        lms_for_peeks_debug(images, npy_path, prefix)
+        data = lms_for_peeks_debug(images, npy_path, prefix)
+        print('done.')
+        print('----------------------')
+        return data 
     else:
-        lms_for_peeks(images, npy_path, prefix)
+        data = lms_for_peeks(images, npy_path, prefix)
+        print('done.')
+        print('----------------------')
+        return data
     
-    print('done.')
-    print('----------------------')
+
         
