@@ -60,6 +60,20 @@ def detect(image, debug):
     else:
         return False, None
 
+
+def prepareLm(lm):
+    return np.expand_dims(np.array(lm).flatten(), axis=0) / 150
+
+def prepareLm1d(lm):
+    a = np.expand_dims(np.array(lm), axis=0) / 150
+    return a
+
+def eval(arr):
+    for elem in arr[0]:
+        if elem > 0.5:
+            return 1
+    return 0
+
 def predict_frame(frame, clf):
     success, lm = detect(frame, True)
         
@@ -74,6 +88,19 @@ def predict_frame(frame, clf):
         return True
     else:
         return False
+
+def predict_frame_1d(frame, clf):
+    success, lm = detect(frame, True)
         
-def prepareLm(lm):
-    return np.expand_dims(np.array(lm).flatten(), axis=0) / 150
+    if (not success):
+        return False
+
+    processed = prepareLm1d(lm)
+
+    prediction = eval(clf.predict(processed))
+    
+    if (prediction == 1):
+        return True
+    else:
+        return False
+

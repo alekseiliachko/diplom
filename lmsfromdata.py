@@ -1,11 +1,4 @@
-import cv2
-import numpy as np
-import dlib 
-import os
-from PIL import Image
 from utils import detect
-
-
 
 DEBUG_PATH = 'debug/marked/'
 
