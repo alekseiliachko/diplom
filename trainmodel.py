@@ -47,4 +47,4 @@ model.compile(loss='binary_crossentropy',
               optimizer='rmsprop',
               metrics=['accuracy'])
 
-# history = model.fit(train_images, train_labels, epochs=10, verbose=1)
+history = model.fit(train_images, train_labels, epochs=10, verbose=1)

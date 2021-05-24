@@ -37,6 +37,7 @@ def landmark(img, face):
 def lms_for_peeks(path, lmpath, prefix):
     save_path_lm = lmpath + "landmarks"+ "_" + prefix
     images = loadImages(path)
+    print("loaded: " + str(len(images)) + " faces.")
     lms = []
 
     i = 1
@@ -47,23 +48,26 @@ def lms_for_peeks(path, lmpath, prefix):
             lms.append(lm)
             i += 1
 
+    print("total: " + str(len(lms)) + " landmarks.")
     np.save(save_path_lm, np.array(lms))
 
 def lms_for_peeks_debug(path, lmpath, prefix):
     save_path_lm = lmpath + "landmarks" + "_" + prefix
     images = loadImages(path)
+    print("loaded: " + str(len(images)) + " faces.")
     lms = []
 
     i = 1
     for image in images:
         faces = detector(image)
-        if (len(faces) > 0):
-            img, lm = landmark_debug(image, faces[0])
+        for j in range(0, len(faces)):
+            img, lm = landmark_debug(image, faces[j])
             img = Image.fromarray(img)
             img.save(DEBUG_PATH + str(i) + ".jpeg")
             lms.append(lm)
             i += 1
 
+    print("total: " + str(len(lms)) + " landmarks.")
     np.save(save_path_lm, np.array(lms))
 
 if __name__ == "__main__":

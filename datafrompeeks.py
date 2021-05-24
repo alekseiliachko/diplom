@@ -12,7 +12,9 @@ import uuid
 FILE_FOLDER = 'files/'
 AUDIO_FOLDER = 'audio/'
 DATA_DIR = 'data/talking/'
-PEEK_PATH = 'npy/peeks.npy'
+
+NPY_PATH = 'npy/'
+NPY_POSTF = '_peeks.npy'
 
 AUDIO_NAME = 'audio.wav'
 
@@ -36,6 +38,8 @@ def images_for_peeks(filename, timespamps):
     video_capture = cv2.VideoCapture(path)
     frames_per_sec = video_capture.get(cv2.CAP_PROP_FPS)
 
+    cnt = 0
+
     for timestamp in timespamps:
         frame_number = int_r(frames_per_sec * timestamp)
         video_capture.set(cv2.CAP_PROP_POS_FRAMES, frame_number-1)
@@ -51,19 +55,24 @@ def images_for_peeks(filename, timespamps):
             minNeighbors=3,
             minSize=(30, 30))
         
-        if (len(faces) != 0):
-            x, y, w, h = faces[0]
+        for i in range(0, len(faces)):
+            x, y, w, h = faces[i]
             faceImage = frame[y:y+h, x:x+w]
             final = Image.fromarray(faceImage)
             final = final.resize((WIDTH, HEIGHT), Image.ANTIALIAS)
             image_path = DATA_DIR + str(uuid.uuid4()) + ".jpg"
             final.save(image_path)
 
+            cnt += 1
+
+    print("total: " + str(cnt) + " faces.")
+
 if __name__ == "__main__":
     filename = sys.argv[1]
 
-    peeks = np.load(PEEK_PATH)
-    print('Loaded ' + str(peeks.shape[0]) + ' peeks.')
+    peek_path = NPY_PATH + filename + NPY_POSTF
+    peeks = np.load(peek_path)
+    print('loaded: ' + str(peeks.shape[0]) + ' peeks.')
 
     clear(DATA_DIR)
 

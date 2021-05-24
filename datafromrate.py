@@ -26,6 +26,9 @@ def data_for_rate(filename, rate):
     frames_per_sec = video_capture.get(cv2.CAP_PROP_FPS)
     length = frame_count / frames_per_sec
 
+    if (rate == None):
+        rate = frames_per_sec
+
     #WORK WITH VIDEO
     d_time = 1 / rate
     timestamp = 0
@@ -33,6 +36,7 @@ def data_for_rate(filename, rate):
     video_capture.set(cv2.CAP_PROP_POS_FRAMES, timestamp * frames_per_sec) # optional
     success, frame = video_capture.read()
 
+    cnt = 0
     while success and timestamp < length:
 
         if (success == False):
@@ -45,24 +49,29 @@ def data_for_rate(filename, rate):
             minNeighbors=3,
             minSize=(30, 30))
         
-        if (len(faces) != 0):
-            x, y, w, h = faces[0]
+        for i in range(0, len(faces)):
+            x, y, w, h = faces[i]
             faceImage = frame[y:y+h, x:x+w]
             final = Image.fromarray(faceImage)
             final = final.resize((WIDTH, HEIGHT), Image.ANTIALIAS)
             image_path = DATA_DIR + str(uuid.uuid4()) + ".jpg"
             final.save(image_path)
 
+            cnt += 1
+
         # next frame
         timestamp = timestamp + d_time;
         video_capture.set(cv2.CAP_PROP_POS_FRAMES, timestamp * frames_per_sec)
         success, frame = video_capture.read()   
 
-
+    print("total: " + str(cnt) + " images generated.")
 
 if __name__ == "__main__":
     
     filename = sys.argv[1]
-    rate = int(sys.argv[2])
+
+    rate = None
+    if (len(sys.argv) > 2):
+        rate = int(sys.argv[2])
 
     data_for_rate(filename, rate)

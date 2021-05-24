@@ -18,33 +18,32 @@ X2 = np.load('npy/landmarks_silent.npy')
 Y1 = np.ones(X1.shape[0])
 Y2 = np.zeros(X2.shape[0])
 
-X = np.concatenate((X1, X2), axis=0)
-# np.random.shuffle(X)   
-
-Y = np.concatenate((Y1, Y2), axis=0)
+X = np.concatenate((X1, X2), axis=0) / 150
+Y = np.concatenate((Y1, Y2), axis=0).reshape(-1, 1)
 
 print(X.shape)
 print(Y.shape)
 
 input_shape=(X.shape[1], X.shape[2])
 
+print(input_shape)
+
 model = Sequential()
-model.add(Conv1D(32, kernel_size=3,
-                 activation='relu',
-                 input_shape=input_shape))
+model.add(InputLayer(input_shape=input_shape))
 
-model.add(MaxPooling1D(pool_size=2))
-
-model.add(Flatten())
-model.add(Dense(128, activation='relu'))
-
+model.add(Dense(256))
+model.add(Activation('sigmoid'))
+model.add(Dropout(0.2))
+model.add(Dense(64))
+model.add(Activation('sigmoid'))
 model.add(Dropout(0.5))
-model.add(Dense(2, activation='softmax'))
+model.add(Dense(1))
+model.add(Activation('softmax'))
 
-model.compile(loss=keras.losses.categorical_crossentropy,
+model.compile(loss=keras.losses.binary_crossentropy,
               optimizer=keras.optimizers.Adadelta(),
               metrics=['accuracy'])
 
 model.summary()
 
-# history = model.fit(X, Y, steps_per_epoch=10, epochs=10, validation_split=0.2, shuffle=True, batch_size=20)
+history = model.fit(X, Y, epochs=15, validation_split=0.2, shuffle=True, batch_size=64)

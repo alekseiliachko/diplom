@@ -9,8 +9,11 @@ from scipy.signal import butter,filtfilt
 
 FILE_FOLDER = 'files/'
 
-AUDIO_PATH = 'audio/audio.wav'
-NPY_PATH = 'npy/peeks.npy'
+AUDIO_FOLDER = 'audio/'
+AUDIO_POSTF = '_audio.wav'
+
+NPY_PATH = 'npy/'
+NPY_POSTF = '_peeks.npy'
 
 def butter_highpass(data,cutoff, fs, order=5):
    """
@@ -39,11 +42,13 @@ if __name__ == "__main__":
     filename = sys.argv[1]
 
     file_path = FILE_FOLDER + filename
+    npy_path = NPY_PATH + filename + NPY_POSTF
+    audio_path = AUDIO_FOLDER + filename + AUDIO_POSTF
     
     audioclip = AudioFileClip(file_path)
-    audioclip.write_audiofile(AUDIO_PATH)
+    audioclip.write_audiofile(audio_path)
 
-    audio, sr = librosa.load(AUDIO_PATH)
+    audio, sr = librosa.load(audio_path)
 
 #   FILTER
     x_f=butter_highpass(audio,30000, sr, order=5)
@@ -63,5 +68,5 @@ if __name__ == "__main__":
 
         plt.show()
     
-    print(peeks.shape)
-    np.save(NPY_PATH, peeks)
+    print("total: " + str(peeks.shape[0]) + " peeks found.")
+    np.save(npy_path, peeks)
