@@ -30,7 +30,7 @@ def process_talking_videos():
     for file in TALKING_FILES:
         __peeks = process_video_exctract_peeks(file, False)
         __data = process_video_extract_data_using_peeks(__peeks, file, False)
-        __lms = process_data_extract_lms(__data, 'talking', False)
+        __lms = process_data_extract_lms(__data, False)
         
         dtime = time.time() - start_time
         print("--- %s seconds ---" % (dtime))
@@ -52,7 +52,7 @@ def process_silent_videos():
     start_time = time.time()
     for file in SILENT_FILES:
         __data = process_video_extract_data_using_rate(file, None, False)
-        __lms = process_data_extract_lms(__data, 'silent', True)
+        __lms = process_data_extract_lms(__data, True)
         
         dtime = time.time() - start_time
         print("--- %s seconds ---" % (dtime))

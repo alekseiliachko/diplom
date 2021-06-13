@@ -11,3 +11,7 @@ cmake
 dlib
 keras
 imutils
+pydot
+pydotplus
+graphviz
+keras-visualizer

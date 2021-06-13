@@ -7,7 +7,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 from utils import predict_frame, predict_frame_1d
 from keras.models import load_model
 
-clf = load_model('models/mymodel')
+clf = load_model('models/notmymodel')
 
 FILE_PATH = 'files/'
 WIDTH = 150;
@@ -61,12 +61,16 @@ def process_video(filename, rate, clf):
 
     return time_speaking, prc
 
+import time
+
 if __name__ == "__main__":
 
     filename = sys.argv[1]
     rate = int(sys.argv[2])
 
+    start_time = time.time()
     time_, proc_ = process_video(filename, rate, clf)
     print("processed video: " + filename)
     print("length of speech in the video: " + str(time_))
     print("part of the video: " + str(proc_))
+    print("time taken: %s" % (time.time() - start_time))

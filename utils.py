@@ -11,6 +11,14 @@ predictor = dlib.shape_predictor("models/shape_predictor_68_face_landmarks.dat")
 
 WIDTH = 150
 IMAGE_DEBUG_PATH = 'debug/image/'
+LMS_DEBUG_PATH = 'debug/marked/'
+
+def lms_debug(image, lms): 
+    for (x, y) in lms:
+        cv2.circle(image, (x, y), 2, (0, 255, 0), -1)
+    cv2.imwrite(LMS_DEBUG_PATH + str(uuid.uuid4()) + ".jpg", image)
+
+
 
 def extract_face_dlib(image, debug):
 
@@ -56,6 +64,8 @@ def detect(image, debug):
     faces = face_detector(cut_face, 1)
     if (len(faces) > 0):
         lm = landmark(cut_face, faces[0])
+        if (debug):
+            lms_debug(cut_face, lm)
         return True, lm
     else:
         return False, None
@@ -104,3 +114,16 @@ def predict_frame_1d(frame, clf):
     else:
         return False
 
+import keras
+import pydot as pyd
+from IPython.display import SVG
+from keras.utils.vis_utils import model_to_dot
+
+keras.utils.vis_utils.pydot = pyd
+
+#Visualize Model
+
+def visualize_model(model):
+  return SVG(model_to_dot(model).create(prog='dot', format='svg'))
+#create your model
+#then call the function on your model

@@ -48,6 +48,7 @@ def process_video_exctract_peeks(filepath, do_print):
 
     audio, sr = librosa.load(audio_path)
 
+    print(sr)
 #   FILTER
     x_f=butter_highpass(audio,30000, sr, order=5)
 

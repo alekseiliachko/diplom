@@ -25,7 +25,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size = 0.2, rando
 clf = RandomForestClassifier(max_depth=2, random_state=0)
 clf.fit(X_train, y_train)
 prediction=clf.predict(X_test)
-print(metrics.accuracy_score(prediction,y_test))
+print("accuracy: " + str(metrics.accuracy_score(prediction,y_test)))
 
 with open('models/trained', 'wb') as f:
     pickle.dump(clf, f)

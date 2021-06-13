@@ -8,6 +8,10 @@ from keras.layers import Dense, InputLayer, Dropout
 from keras.layers import Activation, Dropout, Flatten, Dense, Conv1D, MaxPooling1D
 import keras
 from sklearn.model_selection import train_test_split
+from keras.utils.vis_utils import plot_model
+from utils import visualize_model
+from keras_visualizer import visualizer 
+
 
 X1 = np.load('npy/talking_dataset.npy')
 X2 = np.load('npy/silent_dataset.npy')
@@ -26,15 +30,17 @@ print(X_train.shape[1::])
 
 model = Sequential()
 
-model.add(Conv1D(filters=80,kernel_size=16,strides=1,padding='valid',activation='elu',kernel_initializer='glorot_normal',input_shape=X_train.shape[1::]))
-model.add(Activation('relu'))
-model.add(MaxPooling1D(pool_size=(2)))
-model.add(Dropout(0.5))
+model.add(InputLayer(X_train.shape[1::]))
 
-model.add(Conv1D(filters=40,kernel_size=9,strides=1,padding='same',activation='elu',kernel_initializer='glorot_normal'))
-model.add(Activation('relu'))
-model.add(MaxPooling1D(pool_size=(2)))
-model.add(Dropout(0.5))
+# model.add(Conv1D(filters=80,kernel_size=16,strides=1,padding='valid',activation='elu',kernel_initializer='glorot_normal',input_shape=))
+# model.add(Activation('relu'))
+# model.add(MaxPooling1D(pool_size=(2)))
+# model.add(Dropout(0.5))
+
+# model.add(Conv1D(filters=40,kernel_size=10,strides=1,padding='same',activation='elu',kernel_initializer='glorot_normal'))
+# model.add(Activation('relu'))
+# model.add(MaxPooling1D(pool_size=(2)))
+# model.add(Dropout(0.5))
 
 model.add(Dense(512))
 model.add(Activation('elu'))
@@ -45,6 +51,7 @@ model.add(Dropout(0.5))
 model.add(Dense(128))
 model.add(Activation('elu'))
 model.add(Dropout(0.5))
+model.add(Flatten())
 model.add(Dense(1))
 model.add(Activation('sigmoid'))
 
@@ -58,6 +65,7 @@ model.summary()
 history = model.fit(X_train, y_train, epochs=15, batch_size=64, validation_data=(X_test, y_test), validation_batch_size=64)
 scores = model.evaluate(X_test, y_test, verbose=0)
 print("%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+
 # save model and architecture to single file
 model.save("models/notmymodel")
 print("Saved model to disk")
